@@ -1,0 +1,9 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2023 Bill Binder <dxtwjb@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
+
+xmlfile=com.wwjjbb.RfKillManager.xml
+
+/usr/lib64/qt5/bin/qdbuscpp2xml -m -s ../dbusserver/rfkillmanager.h -o $xmlfile
+
+/usr/lib64/qt5/bin/qdbusxml2cpp $xmlfile -a rfkilladaptor

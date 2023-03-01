@@ -1,0 +1,18 @@
+#!/sbin/openrc-run
+# SPDX-FileCopyrightText: Copyright 2013-2020 Gentoo Authors
+# SPDX-License-Identifier: GPL-2.0-only
+
+description="RfKillManager daemon(ish)"
+
+depend() {
+    need dbus
+    before bluetooth
+    before NetworkManager
+}
+
+command="/usr/sbin/rfkillmanager_service"
+command_args=""
+command_background=true
+pidfile=/run/rfkill.pid
+
+# vim: set ft=gentoo-init-d ts=4 :
