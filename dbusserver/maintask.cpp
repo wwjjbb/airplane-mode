@@ -1,15 +1,16 @@
 // SPDX-FileCopyrightText: 2023 Bill Binder <dxtwjb@gmail.com>
 // SPDX-License-Identifier: GPL-2.0-only
 
+#include "maintask.h"
+
+#include "devrfkill.h"
+
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QJsonDocument>
 #include <QProcess>
 #include <iostream>
-
-#include "devrfkill.h"
-#include "maintask.h"
 
 MainTask::MainTask(QObject *parent)
     : QObject(parent), _counter(0), _demandedStatus(false), _actualStatus(false)
@@ -89,5 +90,3 @@ void MainTask::setDemanded(bool demanded)
         _stateSettings->setValue(BlockStatusSetting, _demandedStatus);
     }
 }
-
-#include "moc_maintask.cpp"

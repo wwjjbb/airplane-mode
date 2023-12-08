@@ -1,0 +1,11 @@
+option('use_system_bus'
+      , type: 'boolean'
+      , value: true
+      , description: 'Use the DBus SystemBus (true) or SessionBus (false)'
+      )
+
+option( 'use_system_config'
+      , type: 'boolean'
+      , value: true
+      , description: 'RfKill state is persisted in /etc/rfkill (true) or ~/.config/rfkill (false)'
+      )

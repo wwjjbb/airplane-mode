@@ -112,29 +112,28 @@ Command line:
 
 * cd into top level directory
 * mkdir ../build
-* cmake  -DCMAKE_INSTALL_PREFIX=MYPREFIX ../build
+* meson setup ../build .
   * there are two build options which are defaulted to live build values
   * USE_SYSTEM_BUS (defaults to ON)
   * USE_SYSTEM_CONFIG (defaults to ON)
-* cmake --build ../build [ --clean-first ]
 
 QtCreator:
 
-* Open the top-level CMakeLists.txt as a project and select the Desktop kit.
+* Open the top-level meson.build as a project and select the Desktop kit.
 * As required using Build menu actions
 
 Source Archive
 --------------
 
-Note this picks up the version from the top-level CMakeLists,txt file:
   $ cd top-level build directory
-  $ ninja -v package_source
+  $ meson dist
 
 Installing
 ----------
 
-It's a standard cmake install, works with a prefix etc
-  # cmake  --build . --target package_source
+It's a standard meson install
+  # cd build
+  # meson install --destdir <DESTDIR>
 
 Afterwards:
 
@@ -153,10 +152,11 @@ Debugging
 
 Stop any installed copy of the rfkillmanager_service from running first.
 
-Set the cmake build options:
+Set the meson build options:
   * Set the install prefix to install into user area, bearing in mind the
     plasmoid applet has to go in exactly the right place or it won't work.
-    I usually don't bother and just trash the real thing.
+    As long as confident that the install locations are correct, it's easiest
+    to run "meson install" as root.
   * USE_SYSTEM_BUS -> ON
     * OFF lets you run the service as a user rather than root, which is useful
       for running under debugger.
@@ -164,15 +164,14 @@ Set the cmake build options:
     * ON changes the config file to be /etc/rfkill, which is writable
       by root. Otherwise its ~/.config/rfkill for a user.
 
-Windows:
+Setup For Testing:
 
 * Console, at the top of the build directory
   * as root if using the default install prefix or System Bus
-  * run the "ninja -v install" command from here
-    * the -v shows where the files are installed, which helps setting up the
-      other windows.
-  * if root, sometimes need to run "chmod you:you -R ../build" if the build
-    can't write its files here.
+  * run the "meson install" command from here
+  * if root, if you accidentally compile something, the normal user won't
+    be able to compile next time. Run "chmod you:you -R ../build" to assign
+    the build files back to the normal user.
 
 * Qtcreator with project opened
   * think/fiddle/build

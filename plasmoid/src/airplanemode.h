@@ -20,7 +20,7 @@ signals:
     void airModeChanged();
 
 public:
-    AirplaneMode( QObject *parent, const QVariantList &args );
+    AirplaneMode( QObject *parent, const KPluginMetaData &data, const QVariantList &args );
     ~AirplaneMode();
 
     bool airMode();

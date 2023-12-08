@@ -1,9 +1,13 @@
 ﻿---
+AllowAllArgumentsOnNextLine: 'false'
 AllowShortBlocksOnASingleLine: 'false'
+AllowShortCaseLabelsOnASingleLine: 'false'
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: 'false'
+AlwaysBreakAfterReturnType: None
 BreakBeforeBraces: Linux
+IncludeBlocks: Regroup
 IndentWidth: '4'
 TabWidth: '4'
 

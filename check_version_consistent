@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# SPDX-FileCopyrightText: 2023 Bill Binder <dxtwjb@gmail.com>
+# SPDX-License-Identifier: GPL-2.0-only
+
+# Compare the two version numbers and return 0 if they are the same or 1 if
+# they are different. Use this to stop the build if they are different.
+#
+# (Yes, I know, but meson's configure can't put a patched metadata.json into
+# a source directory and KDE's plugin macro plus moc can only read the json
+# from the source directory)
+
+# Extract version number from top-level meson.build file into APPVER
+APPVER=$(awk '{ if ($1 == "version" && $2 == ":") print $3 }' "meson.build"  | sed 's/'\''//g; s/,//g')
+
+# Extract version number from the package metadata.json file
+METVER=$(awk '{ if ($1 == "\"Version\":") print $2 }' "plasmoid/src/package/metadata.json" | sed 's/'\"'//g; s/,//g')
+
+# Extract app Id from the package metadata.json file
+METID=$(awk '{ if ($1 == "\"Id\":") print $2 }' "plasmoid/src/package/metadata.json" | sed 's/'\"'//g; s/,//g')
+
+if [[ "$APPVER" == "$METVER" ]]; then
+  echo $METID
+  exit 0
+else
+  echo ERROR - Version numbers do not match
+  exit 1
+fi

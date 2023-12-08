@@ -3,6 +3,7 @@
 
 #include "devrfkill.h"
 
+#include <cstdint>
 #include <errno.h>
 #include <fcntl.h>
 #include <iostream>

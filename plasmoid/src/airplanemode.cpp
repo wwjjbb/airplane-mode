@@ -4,12 +4,16 @@
 */
 
 #include "airplanemode.h"
+
 #include "rfkilladaptor.h"
-#include <KLocalizedString>
+
+#include <KI18n/KLocalizedString>
+#include <QDBusInterface>
 #include <QTimer>
 
-AirplaneMode::AirplaneMode(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args), _airMode(false)
+AirplaneMode::AirplaneMode(QObject *parent, const KPluginMetaData &data,
+                           const QVariantList &args)
+    : Plasma::Applet(parent, data, args), _airMode(false)
 {
     _interface = new QDBusInterface("com.wwjjbb.RfKillManager", "/", "",
 #ifdef USE_SYSTEM_BUS

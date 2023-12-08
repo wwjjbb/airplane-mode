@@ -1,11 +1,15 @@
 // SPDX-FileCopyrightText: 2023 Bill Binder <dxtwjb@gmail.com>
 // SPDX-License-Identifier: GPL-2.0-only
 
-#include <QProcess>
-#include <iostream>
+#include "rfkillmanager.h"
 
 #include "rfkilladaptor.h"
-#include "rfkillmanager.h"
+
+#include <QDBusConnection>
+#include <QDebug>
+#include <QObject>
+#include <QProcess>
+#include <iostream>
 
 ///
 /// \brief RfKillManager::setStatus
@@ -25,6 +29,8 @@ void RfKillManager::setStatus(const bool status)
 
 RfKillManager::RfKillManager(QObject *parent) : QObject(parent)
 {
+    // Don't need to keep a reference because the instance is
+    // attached to this object, and owned by it.
     new RfKillManagerAdaptor(this);
 
 #ifdef USE_SYSTEM_BUS
@@ -72,5 +78,3 @@ void RfKillManager::setActualState(bool state)
         emit statusChanged(_actualState);
     }
 }
-
-#include "moc_rfkillmanager.cpp"
