@@ -3,9 +3,9 @@
 
 if_moc_headers = [ 'rfkilladaptor.h', ]
 
-if_moc_files = qt5.compile_moc(
+if_moc_files = qt.compile_moc(
     headers: if_moc_headers,
-    dependencies: qt5_dep
+    dependencies: qt_dep
     )
 
 if_src = [
@@ -17,7 +17,7 @@ if_lib = static_library(
     if_src,
     if_moc_files,
     extra_files: [ if_moc_headers, ],
-    dependencies: [ qt5_dep, ],
+    dependencies: [ qt_dep, ],
     install: false
     )
 

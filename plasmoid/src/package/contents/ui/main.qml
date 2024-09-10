@@ -1,30 +1,40 @@
 /*
-    SPDX-FileCopyrightText: 2023 wjb <bill@w-j-b.com>
+    SPDX-FileCopyrightText: 2024 wjb <bill@w-j-b.com>
     SPDX-License-Identifier: LGPL-2.1-or-later
 */
 
-import QtQuick 2.1
-import QtQuick.Layouts 1.1
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import QtQuick 2.15
+import QtQuick.Layouts 1.0
 
-Item {
+import org.kde.plasma.plasmoid 2.0
+import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.plasma5support 2.0 as Plasma5Support
+
+PlasmoidItem {
 
     width: 128
     height:128
 
     Plasmoid.backgroundHints: "NoBackground"
-    Plasmoid.preferredRepresentation: Plasmoid.compactRepresentation
+    preferredRepresentation: compactRepresentation
 
     Plasmoid.icon: ""
-    Plasmoid.toolTipMainText: "Airplane Mode"
-    Plasmoid.toolTipSubText: airMode ? "ON: WiFi/Bluetooth are disabled" : "OFF: WiFi/Bluetooth are enabled"
+    toolTipMainText: "Airplane Mode"
+    toolTipSubText: airMode ? "ON: WiFi/Bluetooth are disabled" : "OFF: WiFi/Bluetooth are enabled"
 
-    property bool airMode: Plasmoid.nativeInterface.airMode
+    property bool airMode: plasmoid.airMode
     property string stateIcon: airMode ? "mode-on" : "mode-off"
 
-    Plasmoid.compactRepresentation: ColumnLayout {
+    fullRepresentation: ColumnLayout {
+        id: full
+        anchors.fill: parent
+        PlasmaComponents.Label {
+            text: "fullRepresentation has to be here??"
+        }
+    }
+
+    compactRepresentation: ColumnLayout {
         anchors.fill: parent
         Image {
             //Layout.fillHeight: true
@@ -35,7 +45,7 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: Plasmoid.nativeInterface.toggleAirMode()
+                onClicked: plasmoid.toggleAirMode()
             }
         }
     }

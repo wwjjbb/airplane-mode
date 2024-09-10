@@ -14,18 +14,15 @@
         "Category": "Utilities",
         "Description": "Airplane Mode for laptops without a hardware kill switch",
         "Description[en_GB]": "Airplane Mode for laptops without a hardware kill switch",
-        "EnabledByDefault": true,
         "Icon": "network-flightmode-on",
         "Id": "com.wwjjbb.plasma.airplanemode",
-        "License": "LGPL-2.1+",
         "Name": "Airplane Mode",
         "Name[en_GB]": "Airplane Mode",
-        "ServiceTypes": [
-            "Plasma/Applet"
-        ],
-        "Version": "0.5.0",
+        "Version": "0.6.0",
         "Website": "https://github.com/wwjjbb/airplane-mode"
     },
+    "Keywords": "System",
+    "X-Plasma-API-Minimum-Version": "6.0",
     "X-Plasma-API": "declarativeappletscript",
-    "X-Plasma-MainScript": "ui/main.qml"
+    "KPackageStructure": "Plasma/Applet"
 }

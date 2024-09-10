@@ -1,16 +1,20 @@
 # SPDX-FileCopyrightText: None
 # SPDX-License-Identifier: CC0-1.0
 
+# The version number is also in metadata.json
+
 project('airplanemode', 'cpp',
-        version : '0.5.0',
+        version : '0.6.0',
         license : 'GPL-2.0-only',
         default_options : [
             'prefix=/usr',
             'sysconfdir=/etc',
             'cpp_std=c++17'
         ],
-        meson_version : '>= 1.2.3',
+        meson_version : '>= 1.5.1',
 )
+
+cpp = meson.get_compiler('cpp')
 
 ## Set defines based on options
 ## ============================
@@ -22,6 +26,10 @@ endif
 
 if (get_option('use_system_config'))
     cpp_args += '-DUSE_SYSTEM_CONFIG'
+endif
+
+if (get_option('enable_tracing'))
+    cpp_args += '-DTRACE'
 endif
 
 add_global_arguments(cpp_args, language: 'cpp')
@@ -41,21 +49,35 @@ assert(applet_id != '', 'Applet ID not found in metadata.json')
 ## Check the dependencies
 ## ======================
 
-qt5 = import('qt5')
-qt5_dep = dependency('qt5', modules: ['Core', 'DBus', 'Sql', ])
+qt = import('qt6')
+qt_dep = dependency('qt6', modules: ['Core', 'DBus', 'Sql', ])
 
-
-kf5_plasma_dep = dependency('KF5Plasma',
+# kde-plasma/libplasma
+kf_plasma_dep = dependency('Plasma',
     cmake_module_path: '/usr/share/ECM/find-modules',
     )
 
-kf5_i18n_dep = dependency('KF5I18n',
+kf_what = dependency('KF6Wallet',
     cmake_module_path: '/usr/share/ECM/find-modules',
     )
 
-qdbusxml2cpp = find_program('qdbusxml2cpp', dirs: [ '/usr/lib64/qt5/bin' ], required: true)
+kf_kconfigcore_lib = cpp.find_library('KF6ConfigCore')
 
-plasmapkg2 = find_program('plasmapkg2', required: true)
+kf_config_dep = declare_dependency(
+    include_directories: [
+        '/usr/include/KF6/KConfigCore',
+        '/usr/include/KF6/KConfig',
+        ],
+    dependencies: kf_kconfigcore_lib
+    )
+
+kf_i18n_dep = dependency('KF6I18n',
+    cmake_module_path: '/usr/share/ECM/find-modules',
+    )
+
+qdbusxml2cpp = find_program('qdbusxml2cpp', dirs: [ '/usr/lib64/qt6/bin' ], required: true)
+
+kpackagetool = find_program('kpackagetool6', required: true)
 
 ## Do the build
 ## ============

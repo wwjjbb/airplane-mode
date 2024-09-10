@@ -3,7 +3,6 @@
 
 #include <QtCore>
 #include <csignal>
-#include <iostream>
 
 #include "maintask.h"
 

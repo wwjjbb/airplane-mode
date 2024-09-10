@@ -103,6 +103,14 @@ active or not (currently does not distinguish between soft/hard blocks), and
 watching for changes. Also might help knowing if hard blocked as would be able
 to stop continually changing the soft status)
 
+Build Options
+-------------
+See meson_options.txt - these default to runtime options, they can be changed
+
+   meson configure -D<option>=<value>
+
+e.g. meson configure -Denable_tracing=true
+
 Building
 --------
 
@@ -122,17 +130,21 @@ QtCreator:
 * Open the top-level meson.build as a project and select the Desktop kit.
 * As required using Build menu actions
 
-Source Archive
---------------
+Generate Source Archive
+-----------------------
 
-  $ cd top-level build directory
+Commit all changes, then run "meson dist":
+
+  $ cd <top-level build directory>
   $ meson dist
+
+The archive is in the meson-dist/ directory.
 
 Installing
 ----------
 
-It's a standard meson install
-  # cd build
+It's a standard meson install, so
+  # cd <top-level build directory>
   # meson install --destdir <DESTDIR>
 
 Afterwards:
@@ -164,27 +176,38 @@ Set the meson build options:
     * ON changes the config file to be /etc/rfkill, which is writable
       by root. Otherwise its ~/.config/rfkill for a user.
 
-Setup For Testing:
+Setup For Testing
+-----------------
 
-* Console, at the top of the build directory
-  * as root if using the default install prefix or System Bus
+The software writes to std::cerr a lot - but this is turned OFF by default for
+normal cases, and ON for errors.
+
+* Console A - use for installing the software
+  * cd <top-level build directory>
+  * as root if using the default install prefix & System Bus, or normal user
+    if using local install prefix & User Bus
+  * run the "pkill rfkillmanager" command from here if running the rfkillmanager
+    in console B
   * run the "meson install" command from here
-  * if root, if you accidentally compile something, the normal user won't
-    be able to compile next time. Run "chmod you:you -R ../build" to assign
-    the build files back to the normal user.
+  * Note: if, as root, you accidentally compile something, the normal user won't
+    be able to compile next time. In this case, run
+        # chmod <user>:<user> -R ../build
+    to assign the build files back to the normal user.
 
-* Qtcreator with project opened
-  * think/fiddle/build
-  * could use the actual debugger with the service & session bus, if desperate,
+* QtCreator (with this project open) - for edit/build
+  * could use the actual debugger with the service & Session bus, if desperate,
     but its just messages passing along so just as easy with trace messages.
+  * alternatively, run "meson compile" in the top build directory in yet another
+    console window.
 
-* Console, anywhere
+* Console B, any directory,
+  * login as user account for Session Bus, or as root for System Bus
   * start/stop rfkillmanager_service , or watch it's debug messages
     * can use rc-service if installed in live location
   * can be the dbusservice directory of the build if using Session Bus.
-  * in user account if Session Bus, or root in System Bus
+  * to see the debug from the service, run "/usr/sbin/rfkillmanager_service" after
+    installing from console A
 
-* Any user directory
-  * With the service running
+* Console C, any user directory
   * Run "plasmoidviewer -a com.wwjjbb.plasma.airplanemode"
   * Watch it's debug chatter in the console and interact in the viewer window.

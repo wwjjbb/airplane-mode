@@ -4,12 +4,12 @@
 */
 
 #include "airplanemode.h"
-
 #include "rfkilladaptor.h"
 
-#include <KI18n/KLocalizedString>
+#include <KLocalizedString>
 #include <QDBusInterface>
 #include <QTimer>
+#include <iostream>
 
 AirplaneMode::AirplaneMode(QObject *parent, const KPluginMetaData &data,
                            const QVariantList &args)
@@ -24,7 +24,7 @@ AirplaneMode::AirplaneMode(QObject *parent, const KPluginMetaData &data,
                                     this);
     if (!_interface->isValid()) {
         QDBusError error = _interface->lastError();
-        qDebug() << "Error referencing DBus interface: " << error.message();
+        std::cerr << "Error referencing DBus interface: " << error.message().toStdString() << std::endl;
     }
 
     // The adaptor needs to be attached to an interface object,
@@ -48,29 +48,42 @@ bool AirplaneMode::airMode()
 void AirplaneMode::start()
 {
 
-    connect(_rfkill, &RfKillManagerAdaptor::statusChanged, this,
+    bool okset = connect(_rfkill, &RfKillManagerAdaptor::statusChanged, this,
             &AirplaneMode::setAirMode);
+    if (!okset) {
+        std::cerr << "AirplaneMode::start() failed to connect AirplaneMode::setAirMode" << std::endl;
+    }
 
     // TODO (LOW) figure out to call a C++ method from QML
     // Until then use a signal!
-    connect(this, &AirplaneMode::toggleAirMode, this,
+    bool oktoggle = connect(this, &AirplaneMode::toggleAirMode, this,
             &AirplaneMode::toggleStatus);
+    if (!oktoggle) {
+        std::cerr << "AirplaneMode::start() failed to connect AirplaneMode::toggleStatus" << std::endl;
+    }
 
     _rfkill->requestStatus();
 }
 
 void AirplaneMode::setAirMode(bool newStatus)
 {
-    qDebug() << "Received updated status: " << newStatus;
+#ifdef TRACE
+    std::cerr << "Received updated status: -> " << newStatus << std::endl;
+#endif
     if (newStatus != _airMode) {
         _airMode = newStatus;
+#ifdef TRACE
+        std::cerr << "Sending 'airModeChanged'" << std::endl;
+#endif
         emit airModeChanged();
     }
 }
 
 void AirplaneMode::toggleStatus()
 {
-    qDebug() << "Requesting status change: " << !_airMode;
+#ifdef TRACE
+    std::cerr << "Requesting status change: -> " << !_airMode << std::endl;
+#endif
     _rfkill->setStatus(!_airMode);
 }
 

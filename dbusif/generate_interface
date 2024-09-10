@@ -4,6 +4,6 @@
 
 xmlfile=com.wwjjbb.RfKillManager.xml
 
-/usr/lib64/qt5/bin/qdbuscpp2xml -m -s ../dbusserver/rfkillmanager.h -o $xmlfile
+/usr/lib64/qt6/bin/qdbuscpp2xml -m -s ../dbusserver/rfkillmanager.h -o $xmlfile
 
-/usr/lib64/qt5/bin/qdbusxml2cpp $xmlfile -a rfkilladaptor
+/usr/lib64/qt6/bin/qdbusxml2cpp $xmlfile -a rfkilladaptor

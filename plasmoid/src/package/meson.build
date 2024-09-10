@@ -7,7 +7,7 @@ plasmoid_ui = plasmoid_contents / 'ui'
 
 custom_target('zz_qml_package',
    input: [
-       'metadata.json',
+       #'metadata.json',
        plasmoid_contents / 'screenshot.png',
        plasmoid_images / 'mode-off.png',
        plasmoid_images / 'mode-on.png',
@@ -34,7 +34,7 @@ install_data(plasmoid_images / 'pairs.svgz', install_dir: plasmoid_home / plasmo
 install_data(plasmoid_images / 'pairs.svgz.license', install_dir: plasmoid_home / plasmoid_images)
 install_data(plasmoid_ui / 'main.qml', install_dir: plasmoid_home / plasmoid_ui)
 
-# Generate the appdata xml file using plasmapkg2. and install into /usr/share/metainfo
+# Generate the appdata xml file using kpackagetool. and install into /usr/share/metainfo
 # The tool/meson seemed to require absolute paths for the parameters. No idea what the
 # current working dir is, I'd have assumed the current directory but apparently not.
 
@@ -42,7 +42,7 @@ metainfo_appdata_xml = applet_id + '.appdata.xml'
 metainfo = custom_target('metainfo',
     output: metainfo_appdata_xml,
     input: 'metadata.json',
-    command: [ plasmapkg2,
+    command: [ kpackagetool,
                '--appstream-metainfo',
                meson.current_source_dir(),
                '--appstream-metainfo-output',

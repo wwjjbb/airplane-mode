@@ -38,8 +38,10 @@ int DevRfKill::blockAll(bool block)
     int result = 0;
     // Open device file for write in blocking mode
     int fd = openDevice(0, 0);
-    if (fd < 0)
+    if (fd < 0) {
         result = fd;
+        std::cerr << "DevRfKill::blockAll() : " << block << " failed openDevice()" << std::endl;
+    }
     else {
         result = writeEvent(fd, &event);
         close(fd);
@@ -55,10 +57,12 @@ int DevRfKill::isBlocked()
 {
     rfkill_event event;
     int result = 1;
+    int devcount = 0;
 
     // Open device file for read in non-blocking mode
     int fd = openDevice(1, 1);
     if (fd < 0) {
+        std::cerr << "DevRfKill::isBlocked() : failed openDevice() -> " << fd << std::endl;
         return fd;
     }
 
@@ -69,9 +73,18 @@ int DevRfKill::isBlocked()
             break;
         } else if (rstate == 1) {
             break;
-        } else if (event.soft == 0 && event.hard == 0) {
-            result = 0; // A device is unblocked
+        } else {
+            ++devcount;
+            if (event.soft == 0 && event.hard == 0) {
+                result = 0; // At least one device is unblocked
+                break;
+            }
         }
+    }
+
+    if (devcount == 0) {
+        // If there are no devices, report NOT blocked
+        result = 0;
     }
 
     close(fd);
@@ -88,6 +101,7 @@ int DevRfKill::openDevice(int readonly, int nonblocking)
 
     fd = open(deviceName, readonly ? O_RDONLY : O_RDWR);
     if (fd < 0) {
+        std::cerr << "DevRfKill::openDevice() : failed -> " << errno << std::endl;
         return -errno;
     } else if (nonblocking && fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
         close(fd);
@@ -116,6 +130,7 @@ int DevRfKill::writeEvent(int fd, rfkill_event *event)
                 buffer += written;
             }
         } else if (errno != EINTR && errno != EAGAIN) {
+            std::cerr << "DevRfKill::writeEvent() : failed -> " << errno << std::endl;
             // Ignore these error codes, but finish when any other
             return -1;
         }
@@ -156,6 +171,7 @@ int DevRfKill::readEvent(int fd, rfkill_event *event)
             }
         } else if (len < 0) {
             if (errno != EINTR && errno != EAGAIN) {
+                std::cerr << "DevRfKill::readEvent() : failed -> " << errno << std::endl;
                 return -1;
             } else if (reqd == sizeof(*event) && errno == EAGAIN) {
                 return 1;

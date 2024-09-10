@@ -4,8 +4,14 @@ option('use_system_bus'
       , description: 'Use the DBus SystemBus (true) or SessionBus (false)'
       )
 
-option( 'use_system_config'
+option('use_system_config'
       , type: 'boolean'
       , value: true
       , description: 'RfKill state is persisted in /etc/rfkill (true) or ~/.config/rfkill (false)'
+      )
+
+option('enable_tracing'
+      , type: 'boolean'
+      , value: 'false'
+      , description: 'Enable trace outputs to std::cerr. Set false to only log errors.'
       )

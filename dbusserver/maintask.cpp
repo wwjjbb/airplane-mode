@@ -2,10 +2,8 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
 #include "maintask.h"
-
 #include "devrfkill.h"
 
-#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QJsonDocument>
@@ -38,10 +36,16 @@ void MainTask::run()
         _app->exit(ENOENT);
     }
 
-    connect(_rfkill, &RfKillManager::requireStatus, this,
+    bool oksetdem = connect(_rfkill, &RfKillManager::requireStatus, this,
             &MainTask::setDemanded);
-    connect(this, &MainTask::actualStateChange, _rfkill,
+    if (!oksetdem) {
+        std::cerr << "MainTask::run() failed to connect MainTask::setDemanded" << std::endl;
+    }
+    bool oksetactual = connect(this, &MainTask::actualStateChange, _rfkill,
             &RfKillManager::setActualState);
+    if (!oksetactual) {
+        std::cerr << "MainTask::run() failed to connect RfKillManager::setActualState" << std::endl;
+    }
 
     _demandedStatus = _stateSettings->value(BlockStatusSetting, false).toBool();
 
@@ -67,7 +71,7 @@ void MainTask::checkStatus()
 {
     int status = DevRfKill::isBlocked();
     if (status < 0) {
-        qDebug() << "Failed to determine rfkill state, assume not blocked";
+        std::cerr << "Failed to determine rfkill state, assume not blocked" << std::endl;
         status = 0;
     }
 
@@ -78,12 +82,21 @@ void MainTask::checkStatus()
 
     // TODO (LOW) do not emit actualStateChanged unless an actual change
     // It does get filtered before it goes to dbus, so low priority
+#ifdef TRACE
+    std::cerr << "MainTask::checkStatus() sending actualStatus -> " << _actualStatus << std::endl;
+#endif
     emit actualStateChange(_actualStatus);
 }
 
 void MainTask::setDemanded(bool demanded)
 {
+#ifdef TRACE
+    std::cerr << "MainTask::setDemanded() -> " << demanded << std::endl;
+#endif
     if (demanded != _demandedStatus) {
+#ifdef TRACE
+        std::cerr << "MainTask::setDemanded() - this is a change" << std::endl;
+#endif
 
         _demandedStatus = demanded;
 

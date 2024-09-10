@@ -3,9 +3,7 @@
     SPDX-License-Identifier: LGPL-2.1-or-later
 */
 
-#ifndef AIRPLANEMODE_H
-#define AIRPLANEMODE_H
-
+#pragma once
 
 #include <Plasma/Applet>
 #include <QDBusInterface>
@@ -39,5 +37,3 @@ private:
     bool _airMode;
     int _counter{0};
 };
-
-#endif
